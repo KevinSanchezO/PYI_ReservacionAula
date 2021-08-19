@@ -1,10 +1,25 @@
 #include <stdio.h>
+#include <mysql.h>
 #include <stdlib.h>
+#include "coneccionBD.h"
 
+void infoAulas(){
+    char nombre[30];
+    int capacidad;
+    printf("\nIngrese el nombre para le aula: ");
+    scanf(" %c", nombre);
+    printf("Ingrese la capacidad del aula: ");
+    scanf(" %i", capacidad);
+
+    ConectarBD();
+    InsertarAulas(nombre, capacidad);
+    terminarConexion();
+    printf("\nSe inserto con exito\n");
+}
 
 void menuOperativas(){
     char op = '0';
-    system("cls");
+    //system("clear");
     printf("\n__________________OPCIONES OPERATIVAS__________________");
     printf("\n1. Informacion Aulas");
     printf("\n2. Informacion de profesores");
@@ -19,16 +34,18 @@ void menuOperativas(){
     switch (op){
         case '0':
             break;
+        case '1':
+            infoAulas();
+            break;
         default:
             printf("\nOpcion no valida...\n");
             break;
     }
 }
 
-
 void menuGenerales(){
     char op = '0';
-    system("cls");
+    //system("clear");
     printf("\n___________________OPCIONES GENERALES___________________");
     printf("\n1. Consulta por dia");
     printf("\n2. Consulta por aula");
@@ -45,14 +62,13 @@ void menuGenerales(){
     }
 }
 
-
 void mainMenu(){
 	char op = '0';
 	do{
         //system("cls");
 		printf("\n_______________________MENU PRINCIPAL_______________________");
         printf("\n[1. Opciones operativas | 2. Opciones generales | 0. Salir]\n>>");
-		scanf(" %c",&op);                   //siempre dejar un espacio al principio en el scanf que identifica el tipo
+		scanf(" %c",&op);  //siempre dejar un espacio al principio en el scanf que identifica el tipo
 
 		switch (op){
 			case '0':
@@ -70,8 +86,11 @@ void mainMenu(){
 	}while(op != '0');
 }
 
-
 int main(){
     mainMenu();
     return 0;
 }
+
+//mysql -h localhost -u root -p
+
+//gcc -o main $(mysql_config --cflags) main.c $(mysql_config --libs)
