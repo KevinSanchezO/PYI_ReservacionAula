@@ -1,20 +1,33 @@
 #include <stdio.h>
 #include <mysql.h>
 #include <stdlib.h>
+#include <string.h>
 #include "coneccionBD.h"
 
-void infoAulas(){
-    char nombre[30];
-    int capacidad;
-    printf("\nIngrese el nombre para le aula: ");
-    scanf(" %c", nombre);
-    printf("Ingrese la capacidad del aula: ");
-    scanf(" %i", capacidad);
+void infoCursos(){
+    printf("\n_______________LISTA DE CURSOS_______________\n");
+    ListarCursos();
+}
 
-    ConectarBD();
-    InsertarAulas(nombre, capacidad);
-    terminarConexion();
-    printf("\nSe inserto con exito\n");
+void infoProfesores(){
+    char op = '0';
+    printf("\nDigite una operacion \n[1. Incluir | 2. Listar | 3.Borrar todo]\n>>");
+    scanf(" %c",&op);
+
+    switch (op) {
+        case '1':
+            InsertarProfesores();
+            break;
+        case '2':
+            ListarProfesores();
+            break;
+        case '3':
+            BorrarTodoProfesores();
+            break;
+        default:
+            printf("\nOpcion no valida...\n");
+            break;
+    }
 }
 
 void menuOperativas(){
@@ -35,7 +48,13 @@ void menuOperativas(){
         case '0':
             break;
         case '1':
-            infoAulas();
+            //infoAulas();
+            break;
+        case '2':
+            infoProfesores();
+            break;
+        case '3':
+            infoCursos();
             break;
         default:
             printf("\nOpcion no valida...\n");
@@ -72,6 +91,7 @@ void mainMenu(){
 
 		switch (op){
 			case '0':
+                terminarConexion();
 				break;
 			case '1':
                 menuOperativas();
@@ -87,6 +107,7 @@ void mainMenu(){
 }
 
 int main(){
+    ConectarBD();
     mainMenu();
     return 0;
 }
