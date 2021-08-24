@@ -13,16 +13,93 @@ MYSQL_RES *res;
 MYSQL_ROW row; 
 char *server = "localhost"; 
 char *user = "root"; 
-char *password = "abc1234"; 
-char *database = "DB_Reservacion_Aulas"; 
+char *password = "holamundo1"; 
+char *database = "DB_Reservacion_Aulas";
+FILE *archivo; 
 
 
 int ConectarBD(){
     conn = mysql_init(NULL);
     if (!mysql_real_connect(conn, server, user, password, database, 0, NULL, 0)){ 
 		fprintf(stderr, "%s\n", mysql_error(conn));
+       
 		exit(1);
 	}
+}
+void insertarAulas(){
+    char ruta[300];
+    char caracter;
+    char nombreAula[90];
+    char capacidad[90];
+    int count=0;
+    int bandera=1;
+    int count2=0;
+    printf("\nIngrese la ruta del archivo: ");
+    scanf(" %s", &ruta);
+    archivo=fopen(ruta,"r");
+    if (archivo==NULL){
+        printf("error");
+    }else{
+        while((caracter=fgetc(archivo))!=EOF){
+            if(caracter==','){
+                bandera=2;
+            }
+            if(caracter=='\n'){
+                bandera=1;
+                char consult[200];
+                char *nombre=nombreAula;
+                /*Faltan validaciones *
+                *FORMATOS PARA VALIDACIONES
+                *
+                **********************
+                *NombreAula,Capacidad*
+                **********************
+                *
+                * l1,20 se incluye
+                *
+                * l1,15     Si el nombre existe en la base de datos *NO* se incluye
+                *  ^--------^
+                * 
+                * " ",8 Se puede incluir con un nombre vacio
+                * 
+                * A3," "    No se incluye(informacion no es correcta, falta indicar la capacidad)
+                *     ^-----^
+                * 
+                * A4,XD     No se incluye(informacion no es correcta, no es un entero)
+                *     ^------^
+                *  
+                * 
+                */
+                snprintf(consult, 200, "INSERT INTO Aulas (nombreAula, capacidad) VALUES (\'%s\', \'%i\')", nombreAula, atoi(capacidad));
+                if (mysql_query(conn, consult)){
+                    printf("\nNo se pudo ingresar los datos\n");
+                } else {
+                    printf("\nSe ingreso el Aula %s, capacidad: %i\n", nombreAula, atoi(capacidad));
+                }
+                
+                memset(nombreAula,0,90);
+                memset(capacidad,0,90);
+                memset(consult,0,200);
+                count=0;
+                count2=0;
+            }
+            if (bandera==2 && caracter!=','){
+                capacidad[count]=caracter;
+                count+=1;
+            }
+            if(bandera==1 && caracter!='\n'){
+                nombreAula[count2]=caracter;
+                count2+=1;
+            }
+            
+        }
+        
+        
+    }
+    fclose(archivo);
+
+
+
 }
 
 int InsertarProfesores(){
