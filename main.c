@@ -4,26 +4,32 @@
 #include <string.h>
 #include "coneccionBD.h"
 
+void cursosX_Periodo(){
+    char op = '0';
+    printf("\nDigite una operacion \n[1. Incluir | 2. Listar | 3.Borrar]\n>>");
+    scanf(" %c",&op);
+
+    switch (op) {
+        case '1':
+            InsertarPeriodo();
+            break;
+        case '2':
+            ListarPeriodos();
+            break;
+        case '3':
+            //BorrarPeriodos();
+            break;
+        default:
+            printf("\nOpcion no valida...\n");
+            break; 
+    }
+}
+
 void infoCursos(){
     printf("\n_______________LISTA DE CURSOS_______________\n");
     ListarCursos();
 }
-void infoAulas(){
-    char op = '0';
-    printf("\nDigite una operacion \n[1. Incluir | 0.Salir]\n>>");
-    scanf(" %c",&op);
 
-    switch (op) {
-        case '0':
-            break;
-        case '1':
-            insertarAulas();
-            break;
-        default:
-            printf("\nOpcion no valida...\n");
-            break;
-    }
-}
 void infoProfesores(){
     char op = '0';
     printf("\nDigite una operacion \n[1. Incluir | 2. Listar | 3.Borrar todo]\n>>");
@@ -38,6 +44,23 @@ void infoProfesores(){
             break;
         case '3':
             BorrarTodoProfesores();
+            break;
+        default:
+            printf("\nOpcion no valida...\n");
+            break;
+    }
+}
+
+void infoAulas(){
+    char op = '0';
+    printf("\nDigite una operacion \n[1. Incluir | 0.Salir]\n>>");
+    scanf(" %c",&op);
+
+    switch (op) {
+        case '0':
+            break;
+        case '1':
+            insertarAulas();
             break;
         default:
             printf("\nOpcion no valida...\n");
@@ -70,6 +93,9 @@ void menuOperativas(){
             break;
         case '3':
             infoCursos();
+            break;
+        case '4':
+            cursosX_Periodo();
             break;
         default:
             printf("\nOpcion no valida...\n");

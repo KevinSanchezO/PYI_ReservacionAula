@@ -3,17 +3,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* 
-KEVIN = abc1234
-JIRGORT = holamundo1
-*/
+#define TRUE 1
+#define FALSE 0
 
 MYSQL *conn; 
 MYSQL_RES *res; 
 MYSQL_ROW row; 
 char *server = "localhost"; 
 char *user = "root"; 
-char *password = "holamundo1"; 
+char *password = "abc1234"; //Kevin
+//char *password = "holamundo1";  //Jirgort 
 char *database = "DB_Reservacion_Aulas";
 FILE *archivo; 
 
@@ -26,6 +25,7 @@ int ConectarBD(){
 		exit(1);
 	}
 }
+
 void insertarAulas(){
     char ruta[300];
     char caracter;
@@ -70,7 +70,7 @@ void insertarAulas(){
                 *  
                 * 
                 */
-                snprintf(consult, 200, "INSERT INTO Aulas (nombreAula, capacidad) VALUES (\'%s\', \'%i\')", nombreAula, atoi(capacidad));
+                snprintf(consult, 200, "INSERT INTO Aulas (nombre, capacidad) VALUES (\'%s\', \'%i\')", nombreAula, atoi(capacidad));
                 if (mysql_query(conn, consult)){
                     printf("\nNo se pudo ingresar los datos\n");
                 } else {
@@ -90,16 +90,10 @@ void insertarAulas(){
             if(bandera==1 && caracter!='\n'){
                 nombreAula[count2]=caracter;
                 count2+=1;
-            }
-            
+            }  
         }
-        
-        
     }
     fclose(archivo);
-
-
-
 }
 
 int InsertarProfesores(){
@@ -133,7 +127,7 @@ int ListarProfesores(){
 	}
     
     res = mysql_use_result(conn);
-    printf("\nCedula\tNombre\n");
+    printf("\nCedula\t\tNombre\n");
 	while ((row = mysql_fetch_row(res)) != NULL) {
 		printf("%s\t%s \n", row[0], row[1]);
     }
@@ -156,12 +150,93 @@ int ListarCursos(){
 	}
     
     res = mysql_use_result(conn);
-    printf("\nCodigo de carrera\tCodigo de curso\tNombre del curso\n");
+    printf("\nCodigo de carrera\tCodigo de curso\t\tNombre del curso\n");
 	while ((row = mysql_fetch_row(res)) != NULL) {
-		printf("%s\t%s\t%s \n", row[0], row[1], row[2]);
+		printf("%s\t\t\t%s\t\t\t%s \n", row[0], row[1], row[2]);
     }
 }
 
+int validarYear(int year){
+    if (year >= 1971){
+        return TRUE;
+    }else{
+        return FALSE;
+    }
+}
+
+int validarPeriodo(int periodo){
+    if (periodo == 1 || periodo == 2){
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+}
+
+int InsertarPeriodo(){
+    char consulta[300];
+    char codCurso[7];
+    int year;
+    int periodo;
+    int grupo;
+    int cedulaProfesor;
+    int cantEstudiantes;
+    char temp;
+
+    printf("\n");
+    ListarCursos();
+
+    printf("\nIngrese el codigo del curso: ");
+    scanf("%c",&temp); // temp statement to clear buffer
+	scanf("%[^\n]",codCurso);
+
+    printf("Ingrese el anio del curso: ");
+    scanf(" %i", &year);
+
+    printf("Ingrese el periodo: ");
+    scanf(" %i", &periodo);
+
+    printf("Ingrese el grupo: ");
+    scanf(" %i", &grupo);
+
+    printf("\n");
+    ListarProfesores();
+    printf("Ingrese la cedula del profesor: ");
+    scanf(" %i", &cedulaProfesor);
+
+    printf("Ingrese la cantidad de estudiantes: ");
+    scanf(" %i", &cantEstudiantes);
+
+    if (validarPeriodo(periodo) == TRUE && validarYear(year) == TRUE){
+        snprintf(consulta, 300, "INSERT INTO CursosPorPeriodo (codCurso, year, periodo, grupo, cedulaProfesor, cantEstudiantes) VALUES (\'%s\',\'%i\',\'%i\',\'%i\',\'%i\',\'%i\')", codCurso, year, periodo, grupo, cedulaProfesor, cantEstudiantes);
+        if (mysql_query(conn, consulta)){
+            printf("\nNo se pudo ingresar los datos\n");
+            return (1);
+        } else {
+            printf("\nSe ingreso el Curso por periodo con existo");
+            return (1);
+        }
+    }else {
+        printf("\nDatos erroneos...\n");
+        return (1);
+     }
+}
+
+int ListarPeriodos(){
+    if (mysql_query(conn, "SELECT * FROM CursosPorPeriodo")) {
+		fprintf(stderr, "%s\n", mysql_error(conn));
+        return (1);
+	}
+    
+    res = mysql_use_result(conn);
+    printf("\nCod. curso\tAnio\t\tPeriodo\t\tGrupo\t\tCed. profesor\t\tCant. Estudiantes\n");
+	while ((row = mysql_fetch_row(res)) != NULL) {
+		printf("%s\t\t%s\t\t%s\t\t%s\t\t%s\t\t%s \n", row[0], row[1], row[2], row[3], row[4], row[5]);
+    }
+}
+
+int BorrarPeriodos(){
+    
+}
 
 void terminarConexion(){
     mysql_free_result(res);
