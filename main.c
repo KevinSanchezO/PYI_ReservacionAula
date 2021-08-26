@@ -17,7 +17,7 @@ void cursosX_Periodo(){
             ListarPeriodos();
             break;
         case '3':
-            //BorrarPeriodos();
+            BorrarPeriodos();
             break;
         default:
             printf("\nOpcion no valida...\n");

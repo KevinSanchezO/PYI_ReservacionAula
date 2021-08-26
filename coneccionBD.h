@@ -2,6 +2,7 @@
 #include <mysql.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #define TRUE 1
 #define FALSE 0
@@ -21,10 +22,38 @@ int ConectarBD(){
     conn = mysql_init(NULL);
     if (!mysql_real_connect(conn, server, user, password, database, 0, NULL, 0)){ 
 		fprintf(stderr, "%s\n", mysql_error(conn));
-       
 		exit(1);
 	}
 }
+
+int verificarFormatoNombre(char* nombre){
+    if (nombre == " "){
+        return TRUE;
+    }
+
+    if (strlen(nombre) == 2){
+        if (isalpha(nombre[0]) && isdigit(nombre[1])){
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    } else {
+        return FALSE;
+    }
+}
+
+int verificarFormatoCapacidad(char* capacidad){
+    if (capacidad == " " || capacidad == "0"){
+        return FALSE;
+    }
+    for(int i = 0; i<strlen(capacidad); i++){
+        if (!isdigit(capacidad[i])){
+            return FALSE;
+        }
+    }
+    return TRUE;
+}
+
 
 void insertarAulas(){
     char ruta[300];
@@ -48,35 +77,23 @@ void insertarAulas(){
                 bandera=1;
                 char consult[200];
                 char *nombre=nombreAula;
-                /*Faltan validaciones *
-                *FORMATOS PARA VALIDACIONES
-                *
-                **********************
-                *NombreAula,Capacidad*
-                **********************
-                *
-                * l1,20 se incluye
-                *
-                * l1,15     Si el nombre existe en la base de datos *NO* se incluye
-                *  ^--------^
-                * 
-                * " ",8 Se puede incluir con un nombre vacio
-                * 
-                * A3," "    No se incluye(informacion no es correcta, falta indicar la capacidad)
-                *     ^-----^
-                * 
-                * A4,XD     No se incluye(informacion no es correcta, no es un entero)
-                *     ^------^
-                *  
-                * 
-                */
-                snprintf(consult, 200, "INSERT INTO Aulas (nombre, capacidad) VALUES (\'%s\', \'%i\')", nombreAula, atoi(capacidad));
-                if (mysql_query(conn, consult)){
-                    printf("\nNo se pudo ingresar los datos\n");
+
+                printf("\n%s", nombreAula);
+                printf("\n%s", capacidad);
+                if (verificarFormatoNombre(nombreAula) == TRUE){
+                    if (verificarFormatoCapacidad(capacidad) == TRUE){
+                        snprintf(consult, 200, "INSERT INTO Aulas (nombre, capacidad) VALUES (\'%s\', \'%i\')", nombreAula, atoi(capacidad));
+                        if (mysql_query(conn, consult)){
+                            printf("\nLos datos ya existen\n");
+                        } else {
+                            printf("\nSe ingreso el Aula %s, capacidad: %i\n", nombreAula, atoi(capacidad));
+                        }    
+                    } else {
+                        printf("\nEl formato de capacidad no es valido\n");
+                    }
                 } else {
-                    printf("\nSe ingreso el Aula %s, capacidad: %i\n", nombreAula, atoi(capacidad));
+                    printf("\nEl formato del nombre del aula no es valido\n");
                 }
-                
                 memset(nombreAula,0,90);
                 memset(capacidad,0,90);
                 memset(consult,0,200);
@@ -235,7 +252,33 @@ int ListarPeriodos(){
 }
 
 int BorrarPeriodos(){
-    
+    char consulta[300]; 
+    char codCurso[7];
+    int year;
+    int periodo;
+    int grupo;
+    char temp;
+
+    ListarPeriodos();
+    printf("\nIngrese el codigo del curso a eliminar: ");
+    scanf("%c",&temp); // temp statement to clear buffer
+	scanf("%[^\n]",codCurso);
+
+    printf("Ingrese el anio del curso a eliminar: ");
+    scanf(" %i", &year);
+
+    printf("Ingrese el periodo a eliminar: ");
+    scanf(" %i", &periodo);
+
+    printf("Ingrese el grupo a eliminar: ");
+    scanf(" %i", &grupo);
+
+    snprintf(consulta, 300, "DELETE FROM CursosPorPeriodo WHERE codCurso = \'%s\' AND year = \'%i\' AND periodo = \'%i\' AND grupo = \'%i\'", codCurso, year, periodo, grupo);
+    if (mysql_query(conn, consulta)) {
+        return (1);
+	} else {    
+        return (1);
+    }
 }
 
 void terminarConexion(){
