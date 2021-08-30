@@ -12,22 +12,24 @@ MYSQL_RES *res;
 MYSQL_ROW row; 
 char *server = "localhost"; 
 char *user = "root"; 
-char *password = "holamundo1"; //Kevin
+char *password = "abc1234"; //Kevin
 //char *password = "holamundo1";  //Jirgort 
 char *database = "DB_Reservacion_Aulas";
 FILE *archivo; 
+
 struct ReservacionAulas{
     
 };
+
 
 int ConectarBD(){
     conn = mysql_init(NULL);
     if (!mysql_real_connect(conn, server, user, password, database, 0, NULL, 0)){ 
 		fprintf(stderr, "%s\n", mysql_error(conn));
-       
 		exit(1);
 	}
 }
+
 
 int verificarFormatoNombre(char* nombre){
     if (nombre == " "){
@@ -44,6 +46,7 @@ int verificarFormatoNombre(char* nombre){
         return FALSE;
     }
 }
+
 
 int verificarFormatoCapacidad(char* capacidad){
     if (capacidad == " " || capacidad == "0"){
@@ -139,6 +142,7 @@ int InsertarProfesores(){
     }
 } 
 
+
 int ListarProfesores(){
     if (mysql_query(conn, "SELECT * FROM Profesores")) {
 		fprintf(stderr, "%s\n", mysql_error(conn));
@@ -152,6 +156,8 @@ int ListarProfesores(){
 		printf("%s\t%s \n", row[0], row[1]);
     }
 }
+
+
 int BorrarTodoProfesores(){
     if (mysql_query(conn, "DELETE FROM Profesores")) {
 		fprintf(stderr, "%s\n", mysql_error(conn));
@@ -161,6 +167,8 @@ int BorrarTodoProfesores(){
         return (1);
     }
 }
+
+
 int ListarCursos(){
     if (mysql_query(conn, "SELECT * FROM Cursos")) {
 		fprintf(stderr, "%s\n", mysql_error(conn));
@@ -174,6 +182,8 @@ int ListarCursos(){
     }
     mysql_free_result(res);
 }
+
+
 int validarYear(int year){
     if (year >= 1971){
         return TRUE;
@@ -182,6 +192,7 @@ int validarYear(int year){
     }
 }
 
+
 int validarPeriodo(int periodo){
     if (periodo == 1 || periodo == 2){
         return TRUE;
@@ -189,6 +200,8 @@ int validarPeriodo(int periodo){
         return FALSE;
     }
 }
+
+
 int InsertarPeriodo(){
     char consulta[300];
     char codCurso[7];
@@ -237,6 +250,8 @@ int InsertarPeriodo(){
         return (1);
      }
 }
+
+
 int ListarPeriodos(){
     if (mysql_query(conn, "SELECT * FROM CursosPorPeriodo")) {
 		fprintf(stderr, "%s\n", mysql_error(conn));
@@ -249,6 +264,8 @@ int ListarPeriodos(){
 		printf("%s\t\t%s\t\t%s\t\t%s\t\t%s\t\t%s \n", row[0], row[1], row[2], row[3], row[4], row[5]);
     }
 }
+
+
 int BorrarPeriodos(){
     char consulta[300]; 
     char codCurso[7];
@@ -278,6 +295,8 @@ int BorrarPeriodos(){
         return (1);
     }
 }
+
+
 ////////////////////////////////////////////////////////////*********
 int listarAulas(){
     if (mysql_query(conn, "SELECT * FROM Aulas")) {
@@ -291,10 +310,6 @@ int listarAulas(){
 		printf("%s\t%s \n", row[0], row[1]);
     }
 }
-
-
-
-
 
 //*********************************************************************************************
 int validarCapacidad(char *codCurso,char *nombreAula){
@@ -330,12 +345,10 @@ int validarCapacidad(char *codCurso,char *nombreAula){
     }else{
         return TRUE;
     }
-
-
-
 }
+
 //////////////////////////////////////////////////
-int isHora2(char* horaInicial,char* horaFinal,char *horaBDInicial,char* horaBDFinal){
+int isHora2(char* horaInicial,char* horaFinal,char* horaBDInicial,char* horaBDFinal){
     char *end;
     char *end2;
     char *end3;
@@ -392,18 +405,13 @@ int isHora2(char* horaInicial,char* horaFinal,char *horaBDInicial,char* horaBDFi
                             return TRUE;
                         }
                     }
-                }
-       
-       
-            
-            
-               
+                }   
             }
         }
-    }
-   
-    
+    } 
 }
+
+
 //************************************************************************************************
 int validarFecha(char *fecha,char *horaInicio, char *horaFin,char *aula,char *codCurso,int periodo,int anio,int grupo){
     char consulta[300];
@@ -462,11 +470,6 @@ int validarFecha(char *fecha,char *horaInicio, char *horaFin,char *aula,char *co
 
 }
 
-
-
-
-
-
 /////////////////////*************************************************************************************
 int listarReservaciones(){
     if (mysql_query(conn, "SELECT * FROM ReservacionAulas")) {
@@ -481,21 +484,7 @@ int listarReservaciones(){
     }
 }
 
-
-
-
-
-
-
-
 ///////////////////////////////////////////////////////
-
-
-
-
-
-
-
 int MostrarIdReservacion(char *fecha,char *horainicio,char *horaFin,char *aula,int anio,int periodo,char *codCurso,int grupo){
     char consulta[300];
     snprintf(consulta, 300, "SELECT codReservacion FROM ReservacionAulas where fecha='%s' AND horaInicio='%s' AND horaFin='%s' AND codCurso='%s' AND grupo='%i' AND nombreAula='%s' AND periodo='%i' AND anio='%i'",fecha,horainicio,horaFin,codCurso,grupo,aula,periodo,anio);
@@ -623,10 +612,12 @@ int incluirReservacion(){
    // temp statement to clear buffer
 	scanf("%i",&anio);
 
+    ListarCursos();
+    ListarPeriodos();
     printf("\nIngrese el periodo: ");
    // temp statement to clear buffer
 	scanf("%i",&periodo);
-    ListarCursos();
+
     printf("\nIngrese el codigo de curso: ");
     scanf("%c",&temp); // temp statement to clear buffer
 	scanf("%[^\n]",&codCurso);
@@ -668,7 +659,6 @@ int incluirReservacion(){
 }
 
 int cancelarReservacion(int codReservacion){
-    
     char consulta2[300];
     snprintf(consulta2, 300, "SELECT codReservacion FROM ReservacionAulas where codReservacion='%i'",codReservacion);
     if (mysql_query(conn, consulta2)) {
@@ -701,11 +691,9 @@ int cancelarReservacion(int codReservacion){
         }
 		
     }
-    printf("\nEl codigo ingresado no pertenece a ninguna aula reservada\n");
-
-    
-    
+    printf("\nEl codigo ingresado no pertenece a ninguna aula reservada\n");  
 }
+
 int pedirCodReservacion(){
     int codReservacion;
     printf("\nIngrese el codigo de reservacion: ");
@@ -713,6 +701,48 @@ int pedirCodReservacion(){
 	scanf("%i",&codReservacion);
     cancelarReservacion(codReservacion);
 }
+
+
+void topAulasReservadas(){//+add
+    if (mysql_query(conn, "SELECT nombreAula, COUNT(nombreAula) AS MOST_FREQUENT FROM ReservacionAulas GROUP BY nombreAula ORDER BY COUNT(nombreAula) DESC")){
+		fprintf(stderr, "%s\n", mysql_error(conn));
+        return;
+	} else {
+        res = mysql_use_result(conn);
+	    for (int x = 1; x<4; x++) {
+            row = mysql_fetch_row(res);
+            if (row == NULL){
+                mysql_free_result(res);
+                return;
+            } else {
+                printf("\n\t%i. %s\n", x, row[0]);
+            }
+        }
+        mysql_free_result(res);
+    }
+}
+
+
+void topProfesoresReservas(){//+add
+    if (mysql_query(conn, "SELECT P.nombreProfesor, P.cedula, COUNT(CP.cedulaProfesor) AS MOST_FREQUENT FROM ReservacionAulas R INNER JOIN CursosPorPeriodo CP ON R.codCurso = CP.codCurso INNER JOIN Profesores P ON CP.cedulaProfesor = P.cedula GROUP BY nombreProfesor, cedula ORDER BY COUNT(CP.cedulaProfesor) DESC")){
+        fprintf(stderr, "%s\n", mysql_error(conn));
+        return;
+    } else {
+        res = mysql_use_result(conn);
+	    for (int x = 1; x<4; x++) {
+            row = mysql_fetch_row(res);
+            if (row == NULL){
+                mysql_free_result(res);
+                return;
+            } else {
+                printf("\n\t%i. nombre: %s\tcedula: %s\n", x, row[0], row[1]);
+            }
+        }
+        mysql_free_result(res);
+    }
+}
+
+
 void terminarConexion(){
     mysql_free_result(res);
 	mysql_close(conn);

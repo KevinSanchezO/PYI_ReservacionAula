@@ -1,11 +1,14 @@
 #include <stdio.h>
 #include "coneccionBD.h"
 #include "prototipos.h"
+
 int main(){
     ConectarBD();
     mainMenu();
     return 0;
 }
+
+
 void mainMenu(){
 	char op = '0';
 	do{
@@ -30,6 +33,7 @@ void mainMenu(){
 		}
 	}while(op != '0');
 }
+
 
 void menuOperativas(){
     char op = '0';
@@ -66,11 +70,16 @@ void menuOperativas(){
         case '6':
             pedirCodReservacion();
             break;
+        case '7'://+add
+            estadisticas();//+add
+            break;//+add
         default:
             printf("\nOpcion no valida...\n");
             break;
     }
 }
+
+
 void infoAulas(){
     char op = '0';
     printf("\nDigite una operacion \n[1. Incluir | 0.Salir]\n>>");
@@ -87,6 +96,8 @@ void infoAulas(){
             break;
     }
 }
+
+
 void infoProfesores(){
     char op = '0';
     printf("\nDigite una operacion \n[1. Incluir | 2. Listar | 3.Borrar todo]\n>>");
@@ -107,10 +118,13 @@ void infoProfesores(){
             break;
     }
 }
+
+
 void infoCursos(){
     printf("\n_______________LISTA DE CURSOS_______________\n");
     ListarCursos();
 }
+
 
 void cursosX_Periodo(){
     char op = '0';
@@ -132,6 +146,16 @@ void cursosX_Periodo(){
             break; 
     }
 }
+
+
+void estadisticas(){//+add
+    printf("\nA. Top 3 Aulas mas reservadas\n");
+    topAulasReservadas();
+    printf("\nB. Top 3 Profesores con mas reservas\n");
+    topProfesoresReservas();
+    printf("\nC. Cantidad de reservaciones anio-mes\n");
+}
+
 
 void menuGenerales(){
     char op = '0';
