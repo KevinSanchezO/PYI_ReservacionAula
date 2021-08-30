@@ -309,10 +309,9 @@ int validarCapacidad(char *codCurso,char *nombreAula){
 	}
     
     res = mysql_use_result(conn);
-    printf("\nCantidad estudiantes\n");
 	while ((row = mysql_fetch_row(res)) != NULL) {
         cantEstudiantes=atoi(row[0]);
-		printf("%i\t\n", cantEstudiantes);
+		
 
     }
     snprintf(consulta1, 300, "SELECT capacidad FROM Aulas where nombreAula='%s'",nombreAula);
@@ -322,10 +321,9 @@ int validarCapacidad(char *codCurso,char *nombreAula){
 	}
     
     res = mysql_use_result(conn);
-    printf("\nCapacidad\n");
 	while ((row = mysql_fetch_row(res)) != NULL) {
         capacidadAula=atoi(row[0]);
-		printf("%i\t\n", capacidadAula);
+		
     }
     if(capacidadAula<cantEstudiantes){
         return FALSE;
@@ -337,54 +335,58 @@ int validarCapacidad(char *codCurso,char *nombreAula){
 
 }
 //////////////////////////////////////////////////
-int isHora2(char* hora,char* horaL,char *horaB,char* horaB2){
+int isHora2(char* horaInicial,char* horaFinal,char *horaBDInicial,char* horaBDFinal){
     char *end;
     char *end2;
     char *end3;
     char *end4;
     int base=10;
-    int horas,minutos,horas2,horas4,minutos2,horas3,minutos3,minutos4;
-    horas=strtol(hora,&end,base);
-    horas2=strtol(horaB,&end2,base);
-    horas3=strtol(horaL,&end3,base);
-    horas4=strtol(horaB2,&end4,base);
-    printf("%d\n",horas);
-    printf("%d\n",horas2);
-    printf("%d\n",horas3);
-    printf("%d\n",horas4);
-    if (horas<horas2){
-        if(horas3<horas2){
+    int horasInicial,minutosInicial,horasBDInicial,horasBDFin,minutosBDInicial,horasFinal,minutosFin,minutosBDFin;
+    horasInicial=strtol(horaInicial,&end,base);
+    horasBDInicial=strtol(horaBDInicial,&end2,base);
+    horasFinal=strtol(horaFinal,&end3,base);
+    horasBDFin=strtol(horaBDFinal,&end4,base);
+    printf("%d\n",horasInicial);
+    printf("%d\n",horasBDInicial);
+    printf("%d\n",horasFinal);
+    printf("%d\n",horasBDFin);
+    if (horasInicial<horasBDInicial){
+        if(horasFinal<horasBDInicial){
             return TRUE;
         }else{
             return FALSE;
         }
             
     }else{
-        if(horas>horas4){
-           return TRUE; 
+        if(horasInicial>horasBDInicial){
+            if(horasInicial>horasBDFin){
+                return TRUE;
+            }else{
+                return FALSE;
+            }
         }else{
-            if(horas==horas2){
+            if(horasInicial==horasBDInicial){
                 if(end[0]==':' && end2[0]==':' && end3[0]==':' && end4[0]==':'){
-                    minutos=strtol(end+1,&end,base);//hora
+                    minutosInicial=strtol(end+1,&end,base);//hora
 
-                    minutos2=strtol(end2+1,&end2,base);//horaB
+                    minutosBDInicial=strtol(end2+1,&end2,base);//horaB
 
-                    minutos3=strtol(end3+1,&end3,base);//horaL
-                    minutos4=strtol(end4+1,&end4,base);//horaB2
-                    printf("%d\n",minutos);
-                    printf("%d\n",minutos2);
-                    printf("%d\n",minutos3);
-                    printf("%d\n",minutos4);
-                    if(minutos>minutos2){
-                        if(horas==horas4){
-                            if(minutos>minutos4){
+                    minutosFin=strtol(end3+1,&end3,base);//horaL
+                    minutosBDFin=strtol(end4+1,&end4,base);//horaB2
+                    printf("%d\n",minutosInicial);
+                    printf("%d\n",minutosBDInicial);
+                    printf("%d\n",minutosFin);
+                    printf("%d\n",minutosBDFin);
+                    if(minutosInicial>minutosBDInicial){
+                        if(horasInicial==horasBDFin){
+                            if(minutosInicial>minutosBDFin){
                                 return TRUE;
                             }else{
                                 return FALSE;
                             }
                         }
                     }else{
-                        if(minutos3>minutos2){
+                        if(minutosFin>minutosBDInicial){
                             return FALSE;
                         }else{
                             return TRUE;
@@ -420,7 +422,7 @@ int validarFecha(char *fecha,char *horaInicio, char *horaFin,char *aula,char *co
     char *fec;
     char *fec1;
    
-    snprintf(consulta, 300, "SELECT fecha,horaInicio,horaFin FROM ReservacionAulas where nombreAula='%s' AND codCurso='%s' AND periodo='%i' AND anio='%i' AND grupo='%i'",aula,codCurso,periodo,anio,grupo);
+    snprintf(consulta, 300, "SELECT fecha,horaInicio,horaFin FROM ReservacionAulas where nombreAula='%s' AND periodo='%i' AND anio='%i'",aula,periodo,anio);
     if (mysql_query(conn, consulta)) {
 		fprintf(stderr, "%s\n", mysql_error(conn));
         return (1);
@@ -480,6 +482,34 @@ int listarReservaciones(){
 }
 
 
+
+
+
+
+
+
+///////////////////////////////////////////////////////
+
+
+
+
+
+
+
+int MostrarIdReservacion(char *fecha,char *horainicio,char *horaFin,char *aula,int anio,int periodo,char *codCurso,int grupo){
+    char consulta[300];
+    snprintf(consulta, 300, "SELECT codReservacion FROM ReservacionAulas where fecha='%s' AND horaInicio='%s' AND horaFin='%s' AND codCurso='%s' AND grupo='%i' AND nombreAula='%s' AND periodo='%i' AND anio='%i'",fecha,horainicio,horaFin,codCurso,grupo,aula,periodo,anio);
+    if (mysql_query(conn, consulta)) {
+		fprintf(stderr, "%s\n", mysql_error(conn));
+        return (1);
+	}
+    
+    res = mysql_use_result(conn);
+    printf("\nCod. reservacion\n");
+	while ((row = mysql_fetch_row(res)) != NULL) {
+		printf("%s\n", row[0]);
+    }
+}
 
 bool isDate(char* fecha){
     char *end;
@@ -613,7 +643,8 @@ int incluirReservacion(){
                          printf("\nNo se pudo ingresar los datos\n");
                         return (1);
                     } else {
-                        printf("\nSe ingreso el Curso por periodo con existo");
+                        MostrarIdReservacion(fecha,horaInicio,horaFin,aula,anio,periodo,codCurso,grupo);
+                        printf("\nSe reservo el aula con existo!");
             
                         return (1);
                     }
@@ -636,6 +667,52 @@ int incluirReservacion(){
      }
 }
 
+int cancelarReservacion(int codReservacion){
+    
+    char consulta2[300];
+    snprintf(consulta2, 300, "SELECT codReservacion FROM ReservacionAulas where codReservacion='%i'",codReservacion);
+    if (mysql_query(conn, consulta2)) {
+		fprintf(stderr, "%s\n", mysql_error(conn));
+        printf("\nDatos erroneos...\n");
+        return (1);
+	}
+    
+    res = mysql_use_result(conn);
+   
+	while ((row = mysql_fetch_row(res)) != NULL) {
+        
+        if(atoi(row[0])==codReservacion){
+            mysql_free_result(res);
+            char consulta[300];
+            snprintf(consulta, 300, "DELETE FROM ReservacionAulas where codReservacion='%i'",codReservacion);
+            if (mysql_query(conn, consulta)) {
+		        fprintf(stderr, "%s\n", mysql_error(conn));
+                printf("\nDatos erroneos...\n");
+                return (1);
+	        }else{
+                printf("\nLa reservacion se cancelo exitosamente\n");
+                return (1);
+            }
+            
+            
+            
+        }else{
+           
+        }
+		
+    }
+    printf("\nEl codigo ingresado no pertenece a ninguna aula reservada\n");
+
+    
+    
+}
+int pedirCodReservacion(){
+    int codReservacion;
+    printf("\nIngrese el codigo de reservacion: ");
+   // temp statement to clear buffer
+	scanf("%i",&codReservacion);
+    cancelarReservacion(codReservacion);
+}
 void terminarConexion(){
     mysql_free_result(res);
 	mysql_close(conn);

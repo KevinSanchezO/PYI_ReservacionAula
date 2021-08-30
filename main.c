@@ -63,6 +63,9 @@ void menuOperativas(){
         case '5':
             incluirReservacion();
             break;
+        case '6':
+            pedirCodReservacion();
+            break;
         default:
             printf("\nOpcion no valida...\n");
             break;
