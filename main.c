@@ -1,11 +1,14 @@
 #include <stdio.h>
 #include "coneccionBD.h"
 #include "prototipos.h"
+
+
 int main(){
     ConectarBD();
     mainMenu();
     return 0;
 }
+
 void mainMenu(){
 	char op = '0';
 	do{
@@ -66,9 +69,9 @@ void menuOperativas(){
         case '6':
             pedirCodReservacion();
             break;
-        case '7'://+add
-            estadisticas();//+add
-            break;//+add
+        case '7':
+            estadisticas();
+            break;
         default:
             printf("\nOpcion no valida...\n");
             break;
@@ -141,6 +144,7 @@ void estadisticas(){//+add
     printf("\nB. Top 3 Profesores con mas reservas\n");
     topProfesoresReservas();
     printf("\nC. Cantidad de reservaciones anio-mes\n");
+    cantReservacionesYear();
 }
 
 void menuGenerales(){

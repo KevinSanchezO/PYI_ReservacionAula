@@ -12,7 +12,7 @@ MYSQL_RES *res;
 MYSQL_ROW row; 
 char *server = "localhost"; 
 char *user = "root"; 
-char *password = "holamundo1"; //Kevin
+char *password = "abc1234"; //Kevin
 //char *password = "holamundo1";  //Jirgort 
 char *database = "DB_Reservacion_Aulas";
 FILE *archivo; 
@@ -857,7 +857,7 @@ void topAulasReservadas(){//+add
 *S: El top 3 de los profesores con mas reservaciones de aulas
 *R:No tiene
 */
-void topProfesoresReservas(){//+add
+void topProfesoresReservas(){
     if (mysql_query(conn, "SELECT P.nombreProfesor, P.cedula, COUNT(CP.cedulaProfesor) AS MOST_FREQUENT FROM ReservacionAulas R INNER JOIN CursosPorPeriodo CP ON R.codCurso = CP.codCurso INNER JOIN Profesores P ON CP.cedulaProfesor = P.cedula GROUP BY nombreProfesor, cedula ORDER BY COUNT(CP.cedulaProfesor) DESC")){
         fprintf(stderr, "%s\n", mysql_error(conn));
         return;
@@ -877,6 +877,24 @@ void topProfesoresReservas(){//+add
 }
 
 
+/*
+*Funcion que muestra la cantidad de reservaciones por fecha
+*E: N/A
+*S: La cantidad de reservaciones por fecha
+*R: N/A
+*/
+void cantReservacionesYear(){
+    if (mysql_query(conn, "SELECT DATE_FORMAT(STR_TO_DATE(fecha,'%d/%m/%Y'),'%m/%Y'), Count(codReservacion) AS RANKING FROM ReservacionAulas GROUP BY DATE_FORMAT(STR_TO_DATE(fecha,'%d/%m/%Y'),'%m/%Y') ORDER BY COUNT(codReservacion) DESC")){
+        fprintf(stderr, "%s\n", mysql_error(conn));
+        return;
+    } else {
+        res = mysql_use_result(conn);
+        while ((row = mysql_fetch_row(res))!=NULL) {
+            printf("\n\tFecha: %s, cantidad de reservaciones: %s\n", row[0], row[1]);
+        }
+        mysql_free_result(res);
+    }
+}
 
 
 ///MENU DE GENERALIDADES**************
@@ -927,7 +945,7 @@ int consultaPorAula(){
     scanf("%c",&temp); // temp statement to clear buffer
 	scanf("%[^\n]",&aula);
 
-    snprintf(consulta, 300, "SELECT fecha,horaInicio,horaFin,codReservacion,anio,periodo,codCurso,grupo FROM ReservacionAulas where nombreAula='%s' ORDER BY STR_TO_DATE(fecha,'%D/%M/%Y') ASC, horaInicio DESC ",aula);
+    snprintf(consulta, 300, "SELECT fecha,horaInicio,horaFin,codReservacion,anio,periodo,codCurso,grupo FROM ReservacionAulas where nombreAula='%s' ORDER BY STR_TO_DATE(fecha,'%D/%M/%Y') ASC, STR_TO_DATE(horaInicio,'%h:%i') ASC ",aula);
     if (mysql_query(conn, consulta)) {
 		fprintf(stderr, "%s\n", mysql_error(conn));
         return (1);
