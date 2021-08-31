@@ -702,19 +702,22 @@ int incluirReservacion(){
 	scanf("%[^\n]",&fecha);
 
     if(!isDate(fecha)){
-        printf("\nFALLOOO! ");
+        printf("\nError de formato fecha\n");
+        return (1);
     }
     printf("\nIngrese la hora de inicio: ");
     scanf("%c",&temp); // temp statement to clear buffer
 	scanf("%[^\n]",&horaInicio);
-    if(isHora(horaInicio)){
-        printf("\nfacilito! ");
+    if(!isHora(horaInicio)){
+        printf("\nError de formato hora\n");
+        return (1);
     }
     printf("\nIngrese la hora de fin: ");
     scanf("%c",&temp); // temp statement to clear buffer
 	scanf("%[^\n]",&horaFin);
-    if(isHora(horaFin)){
-        printf("\nfacilito! ");
+    if(!isHora(horaFin)){
+        printf("\nError de formato hora\n");
+        return (1);
     }
     listarAulas();
     printf("\nIngrese el nombre del aula: ");
